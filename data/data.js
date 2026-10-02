@@ -102,6 +102,51 @@ window.DATA = {
     { t: "Digital / en redes", d: "Grabar y difundir videos para humillar, burlarse en TikTok o grupos de WhatsApp, acosar en línea, difundir imágenes íntimas sin permiso o suplantar a alguien. Es una forma de violencia psicológica reconocida y afecta cada vez más a adolescentes y hombres.", icon: "digital" }
   ],
 
+  /* ========================================================================
+     REGISTRO ADMINISTRATIVO — Programa Nacional Warmi Ñan (ex-Aurora), MIMP.
+     A diferencia de ENDES (encuesta de prevalencia), esto es el conteo de
+     CASOS REALES atendidos cada año. Evidencia B.
+     ======================================================================== */
+  registro: {
+    anios: [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025],
+
+    // Feminicidios y tentativas (portal estadístico Warmi Ñan / MIMP)
+    feminicidios: [149, 166, 131, 136, 130, 170, 162, 134],
+    tentativas:   [304, 404, 330, 293, 223, 258, 233, 270],
+
+    // Atenciones CEM por tipo de violencia (casos atendidos)
+    cem_total:    [133697, 181885, 114495, 163797, 154202, 166313, 168492, 169536],
+    cem_psico:    [ 66628,  90235,  55995,  75894,  66623,  71075,  71717,  74004],
+    cem_fisica:   [ 53607,  72582,  44125,  64805,  59521,  63726,  63692,  62617],
+    cem_sexual:   [ 12839,  18044,  13843,  22456,  27362,  30837,  32388,  32180],
+    cem_econ:     [   623,   1024,    532,    642,    696,    675,    695,    735],
+
+    // Línea 100 — llamadas efectivas por violencia (consultas)
+    linea100:     [ 75988, 119786, 235791, 208199, 170780, 143644, 137741, 160796],
+
+    // N.º de CEM operativos (cobertura del servicio)
+    n_cem:        [   346,    396,    416,    430,    430,    433,    433,    433]
+  },
+
+  /* --- Mapa alternativo: registro administrativo por departamento ----------
+     Warmi Ñan / MIMP — casos atendidos en CEM (ene–dic 2025) y feminicidios.
+     COMPLETO para los 25 departamentos (a diferencia de la prevalencia ENDES). */
+  dep_registro: {
+    "AMAZONAS": {cem: 2251, fem: 1}, "ANCASH": {cem: 8194, fem: 6},
+    "APURIMAC": {cem: 3177, fem: 1}, "AREQUIPA": {cem: 16013, fem: 11},
+    "AYACUCHO": {cem: 5939, fem: 5}, "CAJAMARCA": {cem: 4126, fem: 5},
+    "CALLAO": {cem: 4407, fem: 1}, "CUSCO": {cem: 11081, fem: 11},
+    "HUANCAVELICA": {cem: 2674, fem: 1}, "HUANUCO": {cem: 5659, fem: 3},
+    "ICA": {cem: 6676, fem: 5}, "JUNIN": {cem: 7212, fem: 12},
+    "LA LIBERTAD": {cem: 8708, fem: 6}, "LAMBAYEQUE": {cem: 3958, fem: 1},
+    "LIMA": {cem: 44262, fem: 32}, "LORETO": {cem: 3514, fem: 3},
+    "MADRE DE DIOS": {cem: 1465, fem: 0}, "MOQUEGUA": {cem: 1772, fem: 2},
+    "PASCO": {cem: 1450, fem: 0}, "PIURA": {cem: 7467, fem: 5},
+    "PUNO": {cem: 4966, fem: 10}, "SAN MARTIN": {cem: 6836, fem: 3},
+    "TACNA": {cem: 3024, fem: 4}, "TUMBES": {cem: 2138, fem: 1},
+    "UCAYALI": {cem: 2567, fem: 5}
+  },
+
   /* --- Canales de ayuda (servicios públicos MIMP / PNP) -------------------- */
   canales: [
     { n: "Línea 100", d: "Orientación gratuita 24 h, todo el país. Para mujeres y cualquier integrante del grupo familiar.", c: "100" },

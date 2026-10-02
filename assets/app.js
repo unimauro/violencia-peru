@@ -72,20 +72,65 @@
       '</div><div class="d">' + c.d + '</div></div>';
   }).join("");
 
-  /* ranking departamental */
-  var rows = Object.keys(D.departamentos).map(function (k) { return { k: k, v: D.departamentos[k] }; });
-  var withData = rows.filter(function (r) { return r.v != null; }).sort(function (a, b) { return b.v - a.v; });
-  var noData = rows.filter(function (r) { return r.v == null; });
-  var maxV = withData[0].v;
-  var tbl = withData.map(function (r, i) {
-    var w = Math.round(r.v / maxV * 66);
-    return '<tr><td>' + (i + 1) + '. ' + nombre(r.k) +
-      '</td><td><span class="bar" style="width:' + w + 'px"></span>' + fmt(r.v) + '%</td></tr>';
-  }).join("");
-  tbl += noData.map(function (r) {
-    return '<tr><td class="nd">' + nombre(r.k) + '</td><td class="nd">sin dato</td></tr>';
-  }).join("");
-  document.getElementById("rankTbl").innerHTML = tbl;
+  /* --- feminicidios: titulares --- */
+  var reg = D.registro;
+  var iLast = reg.anios.indexOf(2024);
+  var fem24 = reg.feminicidios[iLast], ten24 = reg.tentativas[iLast];
+  var cada = Math.round(365 / fem24 * 10) / 10;
+  var femAcum = reg.feminicidios.reduce(function (a, b) { return a + b; }, 0);
+  document.getElementById("fem-2024").textContent = fem24;
+  document.getElementById("fem-ult").textContent = fem24;
+  document.getElementById("ten-2024").textContent = ten24;
+  document.getElementById("fem-cada").textContent = "cada " + fmt(cada) + " días";
+  document.getElementById("fem-acum").textContent = femAcum.toLocaleString("es-PE");
+
+  /* --- mapa: métricas seleccionables + ranking --- */
+  var METRICS = {
+    endes: { get: function (k) { return D.departamentos[k]; },
+             cap: "% mujeres víctimas de violencia de pareja alguna vez (ENDES 2024).",
+             isPct: true, unit: "", min: 35, max: 67 },
+    cem:   { get: function (k) { return D.dep_registro[k] ? D.dep_registro[k].cem : null; },
+             cap: "Casos atendidos en Centros Emergencia Mujer (Warmi Ñan/MIMP, 2025).",
+             isPct: false, unit: " casos", min: 1400, max: 44500 },
+    fem:   { get: function (k) { return D.dep_registro[k] ? D.dep_registro[k].fem : null; },
+             cap: "Feminicidios registrados (Warmi Ñan/MIMP, 2025).",
+             isPct: false, unit: "", min: 0, max: 32 }
+  };
+  var currentMetric = "endes";
+  function valTxt(v, m) {
+    if (v == null) return "sin dato";
+    return m.isPct ? fmt(v) + "%" : v.toLocaleString("es-PE") + m.unit;
+  }
+  function renderRank() {
+    var m = METRICS[currentMetric];
+    var rows = Object.keys(D.departamentos).map(function (k) { return { k: k, v: m.get(k) }; });
+    var wd = rows.filter(function (r) { return r.v != null; }).sort(function (a, b) { return b.v - a.v; });
+    var nd = rows.filter(function (r) { return r.v == null; });
+    var maxV = wd[0].v || 1;
+    var tbl = wd.map(function (r, i) {
+      var w = Math.round(r.v / maxV * 66);
+      return '<tr><td>' + (i + 1) + '. ' + nombre(r.k) +
+        '</td><td><span class="bar" style="width:' + Math.max(w, 2) + 'px"></span>' + valTxt(r.v, m) + '</td></tr>';
+    }).join("");
+    tbl += nd.map(function (r) {
+      return '<tr><td class="nd">' + nombre(r.k) + '</td><td class="nd">sin dato</td></tr>';
+    }).join("");
+    document.getElementById("rankTbl").innerHTML = tbl;
+    document.getElementById("rankCap").textContent = m.cap;
+  }
+  renderRank();
+
+  var drawMap = function () {}; // se asigna al construir ECharts
+  Array.prototype.forEach.call(document.querySelectorAll("#mapToggle button"), function (b) {
+    b.addEventListener("click", function () {
+      currentMetric = b.getAttribute("data-m");
+      Array.prototype.forEach.call(document.querySelectorAll("#mapToggle button"), function (x) {
+        x.classList.toggle("on", x === b);
+      });
+      renderRank();
+      drawMap();
+    });
+  });
 
   /* ---------- guardia: si ECharts no cargó ---------- */
   if (typeof echarts === "undefined") {
@@ -213,40 +258,111 @@
       ]
     }, anim), true);
 
-    /* ---- mapa ---- */
-    var mapData = Object.keys(D.departamentos).map(function (k) {
-      return { name: k, value: D.departamentos[k] };
-    });
-    mk("chMapa").setOption(Object.assign({
+    /* ---- mapa (dirigido por currentMetric) ---- */
+    var mapChart = mk("chMapa");
+    drawMap = function () {
+      var m = METRICS[currentMetric];
+      var mapData = Object.keys(D.departamentos).map(function (k) {
+        var v = m.get(k);
+        return { name: k, value: (v == null ? "-" : v) };
+      });
+      var lbl = currentMetric === "endes" ? "mujeres víctimas"
+              : currentMetric === "cem" ? "casos atendidos" : "feminicidios";
+      mapChart.setOption({
+        textStyle: base,
+        tooltip: tooltip({
+          trigger: "item",
+          formatter: function (o) {
+            var v = (o.value == null || o.value === "-" || isNaN(o.value))
+              ? "sin dato" : "<b style='color:" + p.rose + "'>" + valTxt(+o.value, m) + "</b>";
+            return "<b>" + nombre(o.name) + "</b><br>" + lbl + ": " + v;
+          }
+        }),
+        visualMap: {
+          min: m.min, max: m.max, left: 8, bottom: 10, itemWidth: 12, itemHeight: 110,
+          calculable: true,
+          text: [valTxt(m.max, m), valTxt(m.min, m)],
+          inRange: { color: ["#fbe6ee", "#eaa3c0", "#d35b8c", "#c8306c", "#7e1340"] },
+          textStyle: { color: p.muted, fontFamily: FONT, fontSize: 11 }
+        },
+        series: [{
+          type: "map", map: "peru", roam: false, nameProperty: "NOMBDEP",
+          aspectScale: 0.9, zoom: 1.15, data: mapData,
+          label: { show: false },
+          itemStyle: {
+            borderColor: p.card, borderWidth: 0.8, areaColor: p.line,
+            shadowBlur: 10, shadowColor: hex2rgba("#1b1a22", .14), shadowOffsetY: 3
+          },
+          emphasis: {
+            label: { show: true, color: p.ink, fontFamily: FONT, fontWeight: 600, fontSize: 11,
+                     formatter: function (o) { return nombre(o.name); } },
+            itemStyle: { areaColor: p.amber, borderColor: p.card, borderWidth: 1.4 }
+          },
+          select: { disabled: true }
+        }]
+      }, true);
+    };
+    drawMap();
+
+    /* ---- feminicidios (barras + línea tentativas) ---- */
+    mk("chFem").setOption(Object.assign({
       textStyle: base,
-      tooltip: tooltip({
-        trigger: "item",
-        formatter: function (o) {
-          var v = (o.value == null || isNaN(o.value)) ? "sin dato cargado" : "<b style='color:" + p.rose + "'>" + fmt(o.value) + "%</b>";
-          return "<b>" + nombre(o.name) + "</b><br>mujeres víctimas: " + v;
-        }
-      }),
-      visualMap: {
-        min: 35, max: 67, left: 8, bottom: 10, itemWidth: 12, itemHeight: 110,
-        calculable: true, text: ["67%", "36%"],
-        inRange: { color: ["#fbe6ee", "#eaa3c0", "#d35b8c", "#c8306c", "#7e1340"] },
-        textStyle: { color: p.muted, fontFamily: FONT, fontSize: 11 }
-      },
+      color: [p.rose, p.amber],
+      grid: { left: 6, right: 16, top: 40, bottom: 6, containLabel: true },
+      legend: { top: 2, icon: "roundRect", itemWidth: 16, itemHeight: 8, textStyle: { color: p.ink, fontFamily: FONT } },
+      tooltip: tooltip({ trigger: "axis", axisPointer: { type: "shadow" }, valueFormatter: function (v) { return v; } }),
+      xAxis: Object.assign(axX({ type: "category", data: reg.anios }),
+        { axisLabel: { color: p.muted, fontFamily: FONT }, splitLine: { show: false } }),
+      yAxis: axX({ axisLabel: { color: p.muted, fontFamily: FONT } }),
+      series: [
+        { name: "Feminicidios", type: "bar", barWidth: "46%",
+          data: reg.feminicidios.map(function (v) {
+            return { value: v, itemStyle: { borderRadius: [6, 6, 0, 0],
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                { offset: 0, color: p.rose }, { offset: 1, color: hex2rgba(p.rose, .5) }]) } };
+          }),
+          label: { show: true, position: "top", color: p.ink, fontFamily: FONT, fontWeight: 600 } },
+        { name: "Tentativas", type: "line", data: reg.tentativas, smooth: true,
+          symbol: "circle", symbolSize: 7, lineStyle: { width: 2.6, color: p.amber }, itemStyle: { color: p.amber } }
+      ]
+    }, anim), true);
+
+    /* ---- CEM atenciones por tipo (áreas apiladas) ---- */
+    function stack(name, data, color) {
+      return { name: name, type: "line", stack: "cem", smooth: true, showSymbol: false,
+        lineStyle: { width: 0 }, areaStyle: { color: color, opacity: .9 }, emphasis: { focus: "series" }, data: data };
+    }
+    mk("chCem").setOption(Object.assign({
+      textStyle: base,
+      grid: { left: 6, right: 16, top: 42, bottom: 6, containLabel: true },
+      legend: { top: 2, icon: "roundRect", itemWidth: 14, itemHeight: 8, textStyle: { color: p.ink, fontFamily: FONT } },
+      tooltip: tooltip({ trigger: "axis", valueFormatter: function (v) { return (+v).toLocaleString("es-PE"); } }),
+      xAxis: Object.assign(axX({ type: "category", boundaryGap: false, data: reg.anios }),
+        { axisLabel: { color: p.muted, fontFamily: FONT }, splitLine: { show: false } }),
+      yAxis: axX({ axisLabel: { color: p.muted, fontFamily: FONT,
+        formatter: function (v) { return v >= 1000 ? (v / 1000) + "k" : v; } } }),
+      series: [
+        stack("Psicológica", reg.cem_psico, hex2rgba(p.rose, .85)),
+        stack("Física", reg.cem_fisica, hex2rgba(p.amber, .8)),
+        stack("Sexual", reg.cem_sexual, hex2rgba(p.teal, .8)),
+        stack("Económica", reg.cem_econ, hex2rgba(p.muted, .7))
+      ]
+    }, anim), true);
+
+    /* ---- Línea 100 (área) ---- */
+    mk("chL100").setOption(Object.assign({
+      textStyle: base,
+      grid: { left: 6, right: 20, top: 16, bottom: 6, containLabel: true },
+      tooltip: tooltip({ trigger: "axis", valueFormatter: function (v) { return (+v).toLocaleString("es-PE") + " llamadas"; } }),
+      xAxis: Object.assign(axX({ type: "category", boundaryGap: false, data: reg.anios }),
+        { axisLabel: { color: p.muted, fontFamily: FONT }, splitLine: { show: false } }),
+      yAxis: axX({ axisLabel: { color: p.muted, fontFamily: FONT,
+        formatter: function (v) { return v >= 1000 ? (v / 1000) + "k" : v; } } }),
       series: [{
-        type: "map", map: "peru", roam: false, nameProperty: "NOMBDEP",
-        aspectScale: 0.9, zoom: 1.15,
-        data: mapData,
-        label: { show: false },
-        itemStyle: {
-          borderColor: p.card, borderWidth: 0.8, areaColor: p.line,
-          shadowBlur: 10, shadowColor: hex2rgba("#1b1a22", .14), shadowOffsetY: 3
-        },
-        emphasis: {
-          label: { show: true, color: p.ink, fontFamily: FONT, fontWeight: 600, fontSize: 11,
-                   formatter: function (o) { return nombre(o.name); } },
-          itemStyle: { areaColor: p.amber, borderColor: p.card, borderWidth: 1.4 }
-        },
-        select: { disabled: true }
+        type: "line", data: reg.linea100, smooth: true, symbol: "circle", symbolSize: 7,
+        lineStyle: { width: 3, color: p.teal }, itemStyle: { color: p.teal },
+        areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: hex2rgba(p.teal, .3) }, { offset: 1, color: hex2rgba(p.teal, 0) }]) }
       }]
     }, anim), true);
 

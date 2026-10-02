@@ -21,11 +21,12 @@
   <div class="wrap">
     <div class="brand"><span class="dot"></span> ¿Quién sufre violencia?</div>
     <nav>
-      <a href="#respuesta">La respuesta corta</a>
-      <a href="#cifras">Las cifras</a>
-      <a href="#tendencia">Tendencia</a>
+      <a href="#respuesta">La brecha</a>
+      <a href="#cifras">Cifras</a>
+      <a href="#registro">Encuesta vs registro</a>
       <a href="#mapa">Mapa</a>
-      <a href="#concepto">Qué es (y qué no)</a>
+      <a href="#concepto">Qué es</a>
+      <a href="#violentometro">Violentómetro</a>
       <a href="#ayuda">Buscar ayuda</a>
       <a href="#fuentes">Fuentes</a>
     </nav>
@@ -109,6 +110,56 @@
   </div>
 </section>
 
+<!-- REGISTRO vs ENCUESTA -->
+<section id="registro">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Encuesta vs. registro · lo más valioso</span>
+      <h2>Dos formas de contar la violencia</h2>
+      <p>La ENDES es una <strong>encuesta</strong>: pregunta a una muestra y estima qué porcentaje de mujeres ha vivido violencia. El MIMP, en cambio, lleva un <strong>registro</strong>: cuenta los <strong>casos reales atendidos</strong> cada año en los Centros Emergencia Mujer, la Línea 100 y los feminicidios. Son miradas distintas y complementarias —y el registro es un dato duro, no una estimación.</p>
+    </div>
+    <div class="two">
+      <div class="card" style="border-left:4px solid var(--teal)">
+        <h3>📊 Encuesta — ENDES (INEI)</h3>
+        <p class="cap">Prevalencia</p>
+        <p style="color:var(--ink-2);font-size:14.5px;margin:0">Responde <em>“¿qué proporción de mujeres ha sufrido violencia?”</em>. Captura también lo que <strong>nunca se denunció</strong>. Por eso sus cifras son altas (53,8%). Pero es una estimación con margen de error y sale cada cierto tiempo.</p>
+      </div>
+      <div class="card" style="border-left:4px solid var(--rose)">
+        <h3>🗂️ Registro — Warmi Ñan / MIMP</h3>
+        <p class="cap">Casos reales atendidos</p>
+        <p style="color:var(--ink-2);font-size:14.5px;margin:0">Responde <em>“¿cuántos casos se atendieron este año y dónde?”</em>. Es un conteo exacto, año a año, por departamento. Pero solo ve lo que <strong>llega al sistema</strong>: la mayoría de casos nunca se denuncia.</p>
+      </div>
+    </div>
+
+    <!-- Feminicidios -->
+    <div class="sec-head" style="margin-top:46px;margin-bottom:16px">
+      <h2 style="font-size:1.55rem">El dato que no se discute: feminicidios</h2>
+      <p>Mujeres asesinadas por razones de género. En 2024 hubo <strong id="fem-ult"></strong> feminicidios —aproximadamente <strong>uno cada dos días</strong>— y el número no baja. Las tentativas (intentos de feminicidio) son aún más numerosas.</p>
+    </div>
+    <div class="stats" style="margin-bottom:18px">
+      <div class="stat"><div class="n" id="fem-2024"></div><div class="l">feminicidios en 2024</div><div class="s">Warmi Ñan · Evid. B</div></div>
+      <div class="stat"><div class="n" id="fem-cada"></div><div class="l">en promedio, uno cada tantos días (2024)</div><div class="s">cálculo propio · Evid. B</div></div>
+      <div class="stat"><div class="n alt" id="ten-2024"></div><div class="l">tentativas de feminicidio en 2024</div><div class="s">Warmi Ñan · Evid. B</div></div>
+      <div class="stat"><div class="n" id="fem-acum"></div><div class="l">feminicidios acumulados 2018–2025</div><div class="s">Warmi Ñan · Evid. B</div></div>
+    </div>
+    <div class="card">
+      <h3>Feminicidios y tentativas por año</h3>
+      <p class="cap">Programa Nacional Warmi Ñan (ex-Aurora), MIMP. Registro administrativo.</p>
+      <div class="chart" id="chFem" style="height:360px"></div>
+    </div>
+
+    <!-- Demanda de atención -->
+    <div class="sec-head" style="margin-top:46px;margin-bottom:16px">
+      <h2 style="font-size:1.55rem">La demanda de atención no cede</h2>
+      <p>Mientras la prevalencia estimada por ENDES baja, los <strong>casos atendidos</strong> en los CEM se mantienen altos (unos 169 mil al año) y la violencia sexual atendida casi se <strong>triplicó</strong> desde 2018. Más servicios y más denuncia también explican parte de esto.</p>
+    </div>
+    <div class="two">
+      <div class="card"><h3>Casos atendidos en CEM, por tipo</h3><p class="cap">Warmi Ñan / MIMP. Casos atendidos por año.</p><div class="chart" id="chCem" style="height:340px"></div></div>
+      <div class="card"><h3>Línea 100 — llamadas efectivas por violencia</h3><p class="cap">Warmi Ñan / MIMP. El pico de 2020 coincide con el confinamiento.</p><div class="chart" id="chL100" style="height:340px"></div></div>
+    </div>
+  </div>
+</section>
+
 <!-- TENDENCIA -->
 <section id="tendencia">
   <div class="wrap">
@@ -129,15 +180,20 @@
 <section id="mapa">
   <div class="wrap">
     <div class="sec-head">
-      <span class="eyebrow">Territorio · ENDES 2024</span>
+      <span class="eyebrow">Territorio · INEI + MIMP</span>
       <h2>¿Dónde golpea más?</h2>
-      <p>Porcentaje de mujeres alguna vez unidas víctimas de violencia de pareja <strong>alguna vez</strong>, por departamento (ENDES 2024). La sierra sur concentra las cifras más altas: <strong>Apurímac</strong> encabeza con 66,4%.</p>
+      <p>El mapa cambia según cómo se mida. La <strong>prevalencia</strong> (encuesta ENDES) es más alta en la sierra sur: <strong>Apurímac</strong> lidera con 66,4%. Los <strong>casos atendidos</strong> y los <strong>feminicidios</strong> (registro MIMP, 2025) se concentran donde hay más población y más servicios: Lima, Arequipa, Cusco.</p>
+    </div>
+    <div class="toggle" id="mapToggle">
+      <button data-m="endes" class="on">Prevalencia ENDES (%)</button>
+      <button data-m="cem">Casos CEM 2025</button>
+      <button data-m="fem">Feminicidios 2025</button>
     </div>
     <div class="maprow">
       <div class="card"><div class="chart" id="chMapa" style="height:460px"></div></div>
       <div class="card">
         <h3>Ranking departamental</h3>
-        <p class="cap">% víctimas alguna vez. 4 regiones sin dato: informe en imagen.</p>
+        <p class="cap" id="rankCap">% mujeres víctimas alguna vez (ENDES 2024).</p>
         <div class="rank"><table id="rankTbl"></table></div>
       </div>
     </div>
@@ -180,6 +236,46 @@
         <p style="font-size:13px;color:var(--muted);margin-top:14px">El afecto y la intimidad <strong>requieren consentimiento</strong>: nadie está obligado a darlos. El derecho a decir <em>“no”</em> es justamente lo que protege a cualquiera de la violencia sexual. Puede ser motivo de separación o señal de una relación rota —pero no una agresión que se denuncie.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- VIOLENTOMETRO -->
+<section id="violentometro">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Herramienta · MIMP</span>
+      <h2>El Violentómetro: reconoce las señales a tiempo</h2>
+      <p>La violencia casi nunca empieza con un golpe. Empieza con bromas que hieren, celos y control —y escala. El Violentómetro, difundido por el MIMP, ordena las señales de menor a mayor gravedad. Aplica para cualquier persona: mujer u hombre. <strong>Si te reconoces en la zona naranja o roja, busca ayuda.</strong></p>
+    </div>
+    <div class="vmeter">
+      <div class="vlevel v1">
+        <div class="vhead"><span class="vtag">Ten cuidado</span><span class="vsub">La violencia aumentará</span></div>
+        <div class="vchips">
+          <span>Bromas hirientes</span><span>Chantajear</span><span>Mentir, engañar</span>
+          <span>Ignorar, ley del hielo</span><span>Celos</span><span>Culpabilizar</span>
+          <span>Descalificar</span><span>Ridiculizar, ofender</span><span>Humillar en público</span>
+          <span>Controlar, prohibir (amistades, familia, dinero, salidas, ropa)</span>
+          <span>Grabar y burlarse en redes (TikTok, WhatsApp)</span><span>Intimidar, amenazar</span>
+        </div>
+      </div>
+      <div class="vlevel v2">
+        <div class="vhead"><span class="vtag">Reacciona</span><span class="vsub">No te dejes destruir</span></div>
+        <div class="vchips">
+          <span>Destruir tus cosas</span><span>Manosear</span><span>Caricias agresivas</span>
+          <span>Golpear “jugando”</span><span>Pellizcar, arañar</span><span>Empujar, jalonear</span>
+          <span>Cachetear</span><span>Patear</span><span>Encerrar, aislar</span>
+          <span>Amenazar con objetos o armas</span><span>Amenazar de muerte</span>
+          <span>Forzar una relación sexual</span><span>Abuso sexual</span>
+        </div>
+      </div>
+      <div class="vlevel v3">
+        <div class="vhead"><span class="vtag">¡Necesitas ayuda ya!</span><span class="vsub">Llama a la Línea 100 o PNP 105</span></div>
+        <div class="vchips">
+          <span>Violar</span><span>Mutilar</span><span>Asesinar</span>
+        </div>
+      </div>
+    </div>
+    <p class="src-tag">Adaptado del Violentómetro difundido por el MIMP (origen: Instituto Politécnico Nacional, México). Herramienta de orientación, no un instrumento de diagnóstico.</p>
   </div>
 </section>
 
@@ -239,10 +335,12 @@
         <li>INEI — Nota de prensa N.°078-2024: 53,8% de mujeres víctimas de violencia de pareja.</li>
         <li>INEI — Capítulo “Violencia contra las mujeres, niñas y niños”, ENDES (serie histórica y búsqueda de ayuda).</li>
         <li>INEI — ENARES 2024: tolerancia social y dependencia económica (28,6%).</li>
-        <li>MIMP / Programa Aurora — atenciones en Centros Emergencia Mujer (CEM) y CAI, 2024.</li>
+        <li>MIMP / Programa Nacional Warmi Ñan (ex-Aurora) — <a href="https://portalestadistico.warminan.gob.pe/" target="_blank" rel="noopener">portal estadístico</a>: feminicidios y tentativas, atenciones CEM por tipo, Línea 100, N.° de CEM (series 2018–2025).</li>
+        <li>MIMP — <a href="https://www.datosabiertos.gob.pe/dataset/numero-de-casos-atendidos-por-violencia-contra-la-mujer-integrantes-del-grupo-familiar-y" target="_blank" rel="noopener">Datos Abiertos</a>: casos atendidos en CEM por departamento (2025) y víctimas de feminicidio.</li>
+        <li>Cruce con el repositorio de evaluación del MIMP (pliego 039), que consolida estos registros administrativos.</li>
         <li>Ley N.° 30364 — para prevenir, sancionar y erradicar la violencia contra las mujeres y los integrantes del grupo familiar.</li>
       </ul>
-      <p class="disc">Aclaraciones: (1) Las cifras de ENDES se refieren a mujeres de 15 a 49 años alguna vez unidas; la publicación de la imagen (ENARES) se refiere a mujeres de 18 y más años. No son directamente comparables. (2) Los datos de CEM son <em>registro de atención</em>, no prevalencia poblacional: muchos casos nunca se denuncian. (3) Callao, Tacna, Tumbes y Ucayali no figuran en el mapa porque su informe ENDES 2024 está en imagen escaneada y no se pudo extraer el dato sin riesgo de error.</p>
+      <p class="disc">Aclaraciones: (1) Encuesta ≠ registro. La ENDES (mujeres 15–49 alguna vez unidas) estima <em>prevalencia</em> e incluye lo que nunca se denunció; el registro Warmi Ñan/MIMP cuenta <em>casos atendidos</em> y solo ve lo que llega al sistema. No son comparables entre sí. (2) La publicación de la imagen (ENARES) se refiere a mujeres de 18 y más años. (3) Los feminicidios son un dato de corresponsabilidad multisectorial (investiga el Ministerio Público, sanciona el Poder Judicial); no son atribuibles solo al MIMP. (4) En el mapa, la capa de prevalencia ENDES no tiene dato para Callao, Tacna, Tumbes y Ucayali (informe en imagen escaneada); la capa de registro MIMP sí cubre los 25 departamentos.</p>
     </div>
   </div>
 </section>

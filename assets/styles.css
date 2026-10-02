@@ -111,6 +111,13 @@ section{padding:56px 0;border-top:1px solid var(--line)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 @media(max-width:860px){.two{grid-template-columns:1fr}}
 
+/* toggle */
+.toggle{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.toggle button{border:1px solid var(--line-2);background:var(--card);color:var(--ink-2);
+  padding:9px 15px;border-radius:999px;cursor:pointer;font:600 13px/1 var(--sans);transition:all .15s}
+.toggle button:hover{border-color:var(--rose);color:var(--ink)}
+.toggle button.on{background:var(--rose);border-color:var(--rose);color:#fff}
+
 /* map layout */
 .maprow{display:grid;grid-template-columns:1.3fr .9fr;gap:18px}
 @media(max-width:860px){.maprow{grid-template-columns:1fr}}
@@ -142,6 +149,20 @@ section{padding:56px 0;border-top:1px solid var(--line)}
 .sino li::before{position:absolute;left:0;top:7px;font-weight:700}
 .sino .si li::before{content:"✓";color:var(--rose)}
 .sino .no li::before{content:"✕";color:var(--muted)}
+
+/* violentómetro */
+.vmeter{display:flex;flex-direction:column;gap:3px;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.vlevel{padding:20px 22px;position:relative}
+.vlevel.v1{background:linear-gradient(90deg,#f6c445,#f1b01f);color:#3a2d00}
+.vlevel.v2{background:linear-gradient(90deg,#f0852f,#e0661c);color:#3a1800}
+.vlevel.v3{background:linear-gradient(90deg,#d32f3a,#9e1b32);color:#fff}
+.vhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.vtag{font-family:var(--serif);font-weight:700;font-size:1.25rem}
+.vsub{font-size:13px;opacity:.85;font-weight:600}
+.vchips{display:flex;flex-wrap:wrap;gap:7px}
+.vchips span{background:rgba(255,255,255,.55);border:1px solid rgba(0,0,0,.08);
+  padding:5px 11px;border-radius:999px;font-size:12.5px;font-weight:500}
+.vlevel.v3 .vchips span{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.3);color:#fff}
 
 /* canales */
 .canales{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
