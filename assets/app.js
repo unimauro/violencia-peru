@@ -17,7 +17,7 @@
     var next = dark ? "light" : "dark";
     root.setAttribute("data-theme", next);
     try { localStorage.setItem("vp-theme", next); } catch (e) {}
-    setTimeout(renderAll, 30);
+    setTimeout(renderAll, 40);
   });
 
   function css(v) { return getComputedStyle(root).getPropertyValue(v).trim(); }
@@ -25,10 +25,17 @@
     return {
       ink: css("--ink"), muted: css("--muted"), line: css("--line"),
       rose: css("--rose"), teal: css("--teal"), amber: css("--amber"),
-      card: css("--card")
+      card: css("--card"), paper: css("--paper")
     };
   }
   function fmt(n) { return String(n).replace(".", ","); }
+  function nombre(k) { return k.charAt(0) + k.slice(1).toLowerCase(); }
+  function hex2rgba(h, a) {
+    h = h.replace("#", "");
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    var r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16);
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  }
 
   /* ---------- rellenar textos ---------- */
   document.getElementById("asof").textContent = D.actualizado;
@@ -38,8 +45,7 @@
   var ph = Math.round(cem.hombres / tot * 1000) / 10;
 
   document.getElementById("cemper").textContent = cem.periodo;
-  var gb = document.getElementById("gapbar");
-  gb.innerHTML =
+  document.getElementById("gapbar").innerHTML =
     '<span class="m" style="width:' + pm + '%">Mujeres ' + fmt(pm) + '%</span>' +
     '<span class="h" style="width:' + ph + '%">Hombres ' + fmt(ph) + '%</span>';
   document.getElementById("gaplblm").textContent = cem.mujeres.toLocaleString("es-PE") + " mujeres";
@@ -57,28 +63,22 @@
   document.getElementById("c-sexual").textContent = fmt(n.sexual_2023) + "%";
   document.getElementById("c-dep").textContent = fmt(n.dep_economica_2024) + "%";
 
-  /* tipos */
-  var tipHTML = D.tipos.map(function (t) {
+  document.getElementById("tipos").innerHTML = D.tipos.map(function (t) {
     return '<div class="tipo"><h4>' + t.t + '</h4><p>' + t.d + '</p></div>';
   }).join("");
-  document.getElementById("tipos").innerHTML = tipHTML;
 
-  /* canales */
   document.getElementById("canales").innerHTML = D.canales.map(function (c) {
     return '<div class="canal"><div class="n">' + c.n + '</div><div class="c">' + c.c +
       '</div><div class="d">' + c.d + '</div></div>';
   }).join("");
 
   /* ranking departamental */
-  var rows = Object.keys(D.departamentos).map(function (k) {
-    return { k: k, v: D.departamentos[k] };
-  });
+  var rows = Object.keys(D.departamentos).map(function (k) { return { k: k, v: D.departamentos[k] }; });
   var withData = rows.filter(function (r) { return r.v != null; }).sort(function (a, b) { return b.v - a.v; });
   var noData = rows.filter(function (r) { return r.v == null; });
   var maxV = withData[0].v;
-  function nombre(k){ return k.charAt(0) + k.slice(1).toLowerCase(); }
   var tbl = withData.map(function (r, i) {
-    var w = Math.round(r.v / maxV * 70);
+    var w = Math.round(r.v / maxV * 66);
     return '<tr><td>' + (i + 1) + '. ' + nombre(r.k) +
       '</td><td><span class="bar" style="width:' + w + 'px"></span>' + fmt(r.v) + '%</td></tr>';
   }).join("");
@@ -86,6 +86,16 @@
     return '<tr><td class="nd">' + nombre(r.k) + '</td><td class="nd">sin dato</td></tr>';
   }).join("");
   document.getElementById("rankTbl").innerHTML = tbl;
+
+  /* ---------- guardia: si ECharts no cargó ---------- */
+  if (typeof echarts === "undefined") {
+    Array.prototype.forEach.call(document.querySelectorAll(".chart"), function (el) {
+      el.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;' +
+        'color:var(--muted);font-size:13.5px;text-align:center;padding:20px">No se pudieron cargar los ' +
+        'gráficos (sin conexión al CDN). Los datos siguen disponibles en la sección “Fuentes”.</div>';
+    });
+    return;
+  }
 
   /* ---------- ECharts ---------- */
   var charts = [];
@@ -95,134 +105,187 @@
     charts.push(c);
     return c;
   }
-  var baseText = function (p) { return { color: p.ink, fontFamily: "Inter, sans-serif" }; };
-
-  if (window.PERU_GEOJSON) {
-    echarts.registerMap("peru", window.PERU_GEOJSON);
-  }
+  if (window.PERU_GEOJSON) echarts.registerMap("peru", window.PERU_GEOJSON);
 
   function renderAll() {
     var p = pal();
-    var axisCommon = {
-      axisLine: { lineStyle: { color: p.line } },
-      axisTick: { show: false },
-      axisLabel: { color: p.muted },
-      splitLine: { lineStyle: { color: p.line, type: "dashed" } }
-    };
+    var FONT = "Inter, sans-serif";
+    var base = { color: p.ink, fontFamily: FONT };
+    var anim = { animationDuration: 900, animationEasing: "cubicOut" };
 
-    /* tipos (barras) */
-    mk("chTipos").setOption({
-      textStyle: baseText(p),
-      grid: { left: 8, right: 24, top: 10, bottom: 6, containLabel: true },
-      tooltip: { trigger: "axis", valueFormatter: function (v) { return fmt(v) + "%"; } },
-      xAxis: Object.assign({ type: "value", max: 55 }, axisCommon),
-      yAxis: Object.assign({ type: "category", data: ["Sexual", "Física", "Psicológica"], inverse: false }, axisCommon),
-      series: [{
-        type: "bar", barWidth: "52%",
-        data: [n.sexual_2023, n.fisica_2023, n.psico_2023],
-        itemStyle: { color: p.rose, borderRadius: [0, 6, 6, 0] },
-        label: { show: true, position: "right", color: p.ink, formatter: function (o) { return fmt(o.value) + "%"; } }
-      }]
-    }, true);
-
-    /* tendencia (líneas) */
-    var t = D.tendencia;
-    mk("chTrend").setOption({
-      textStyle: baseText(p),
-      grid: { left: 8, right: 20, top: 36, bottom: 8, containLabel: true },
-      legend: { top: 0, textStyle: { color: p.ink }, data: ["Total", "Psicológica", "Física", "Sexual"] },
-      tooltip: { trigger: "axis", valueFormatter: function (v) { return v == null ? "s/d" : fmt(v) + "%"; } },
-      xAxis: Object.assign({ type: "category", boundaryGap: false, data: t.anios }, axisCommon),
-      yAxis: Object.assign({ type: "value", max: 80, axisLabel: { color: p.muted, formatter: "{value}%" } }, axisCommon),
-      series: [
-        line("Total", t.total, p.rose, 3),
-        line("Psicológica", t.psico, p.teal, 2),
-        line("Física", t.fisica, p.amber, 2),
-        line("Sexual", t.sexual, p.muted, 2)
-      ]
-    }, true);
-    function line(name, data, color, w) {
+    function tooltip(extra) {
+      return Object.assign({
+        backgroundColor: p.card,
+        borderColor: p.line,
+        borderWidth: 1,
+        padding: [9, 12],
+        textStyle: { color: p.ink, fontFamily: FONT, fontSize: 12.5 },
+        extraCssText: "border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12)",
+        valueFormatter: function (v) { return v == null ? "s/d" : fmt(v) + "%"; }
+      }, extra || {});
+    }
+    function axX(o) {
+      return Object.assign({
+        type: "value",
+        axisLine: { show: false }, axisTick: { show: false },
+        axisLabel: { color: p.muted, fontFamily: FONT },
+        splitLine: { lineStyle: { color: p.line, type: "dashed" } }
+      }, o || {});
+    }
+    function axYcat(data, o) {
+      return Object.assign({
+        type: "category", data: data,
+        axisLine: { show: false }, axisTick: { show: false },
+        axisLabel: { color: p.ink, fontFamily: FONT, fontSize: 12.5 },
+        splitLine: { show: false }
+      }, o || {});
+    }
+    function hbar(data, color, max, cat) {
       return {
-        name: name, type: "line", data: data, smooth: true, symbol: "circle", symbolSize: 6,
-        lineStyle: { width: w, color: color }, itemStyle: { color: color },
-        emphasis: { focus: "series" }
+        grid: { left: 6, right: 44, top: 10, bottom: 6, containLabel: true },
+        tooltip: tooltip({ trigger: "axis", axisPointer: { type: "shadow" } }),
+        xAxis: axX({ max: max }),
+        yAxis: axYcat(cat, { inverse: true }),
+        series: [{
+          type: "bar", barWidth: "56%",
+          data: data.map(function (v, i) {
+            // degradado según valor
+            return {
+              value: v,
+              itemStyle: {
+                borderRadius: [0, 7, 7, 0],
+                color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                  { offset: 0, color: hex2rgba(color, .55) },
+                  { offset: 1, color: color }
+                ])
+              }
+            };
+          }),
+          label: { show: true, position: "right", color: p.ink, fontFamily: FONT, fontWeight: 600,
+                   formatter: function (o) { return fmt(o.value) + "%"; } }
+        }]
       };
     }
 
-    /* mapa */
+    /* ---- tipos (barras horizontales) ---- */
+    mk("chTipos").setOption(Object.assign({ textStyle: base },
+      hbar([n.sexual_2023, n.fisica_2023, n.psico_2023], p.rose, 55, ["Sexual", "Física", "Psicológica"]),
+      anim), true);
+
+    /* ---- tendencia (líneas con área) ---- */
+    var t = D.tendencia;
+    function line(name, data, color, w, area) {
+      var s = {
+        name: name, type: "line", data: data, smooth: true,
+        symbol: "circle", symbolSize: 7, showSymbol: false,
+        emphasis: { focus: "series", scale: 1.2 },
+        lineStyle: { width: w, color: color, shadowBlur: area ? 8 : 0, shadowColor: hex2rgba(color, .35), shadowOffsetY: 3 },
+        itemStyle: { color: color, borderColor: p.card, borderWidth: 1.5 }
+      };
+      if (area) {
+        s.areaStyle = {
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: hex2rgba(color, .28) },
+            { offset: 1, color: hex2rgba(color, 0) }
+          ])
+        };
+        s.showSymbol = true;
+      }
+      return s;
+    }
+    mk("chTrend").setOption(Object.assign({
+      textStyle: base,
+      color: [p.rose, p.teal, p.amber, p.muted],
+      grid: { left: 6, right: 22, top: 40, bottom: 6, containLabel: true },
+      legend: { top: 2, icon: "roundRect", itemWidth: 16, itemHeight: 8,
+                textStyle: { color: p.ink, fontFamily: FONT },
+                data: ["Total", "Psicológica", "Física", "Sexual"] },
+      tooltip: tooltip({ trigger: "axis", axisPointer: { type: "line", lineStyle: { color: p.line } } }),
+      xAxis: Object.assign(axX({ type: "category", boundaryGap: false, data: t.anios }),
+        { axisLine: { lineStyle: { color: p.line } }, splitLine: { show: false },
+          axisLabel: { color: p.muted, fontFamily: FONT } }),
+      yAxis: axX({ max: 80, axisLabel: { color: p.muted, fontFamily: FONT, formatter: "{value}%" } }),
+      series: [
+        line("Total", t.total, p.rose, 3.4, true),
+        line("Psicológica", t.psico, p.teal, 2.4, false),
+        line("Física", t.fisica, p.amber, 2.4, false),
+        line("Sexual", t.sexual, p.muted, 2, false)
+      ]
+    }, anim), true);
+
+    /* ---- mapa ---- */
     var mapData = Object.keys(D.departamentos).map(function (k) {
       return { name: k, value: D.departamentos[k] };
     });
-    mk("chMapa").setOption({
-      textStyle: baseText(p),
-      tooltip: {
+    mk("chMapa").setOption(Object.assign({
+      textStyle: base,
+      tooltip: tooltip({
         trigger: "item",
         formatter: function (o) {
-          var v = (o.value == null || isNaN(o.value)) ? "sin dato" : fmt(o.value) + "%";
-          return "<b>" + nombre(o.name) + "</b><br>" + v;
+          var v = (o.value == null || isNaN(o.value)) ? "sin dato cargado" : "<b style='color:" + p.rose + "'>" + fmt(o.value) + "%</b>";
+          return "<b>" + nombre(o.name) + "</b><br>mujeres víctimas: " + v;
         }
-      },
+      }),
       visualMap: {
-        min: 35, max: 67, left: 6, bottom: 6, calculable: true,
-        text: ["67%", "36%"],
-        inRange: { color: ["#f6dfe8", "#e18fb2", "#c8306c", "#7e1340"] },
-        textStyle: { color: p.muted }
+        min: 35, max: 67, left: 8, bottom: 10, itemWidth: 12, itemHeight: 110,
+        calculable: true, text: ["67%", "36%"],
+        inRange: { color: ["#fbe6ee", "#eaa3c0", "#d35b8c", "#c8306c", "#7e1340"] },
+        textStyle: { color: p.muted, fontFamily: FONT, fontSize: 11 }
       },
       series: [{
         type: "map", map: "peru", roam: false, nameProperty: "NOMBDEP",
+        aspectScale: 0.9, zoom: 1.15,
         data: mapData,
         label: { show: false },
-        itemStyle: { borderColor: p.card, borderWidth: .6, areaColor: p.line },
-        emphasis: { label: { show: false }, itemStyle: { areaColor: p.amber } }
+        itemStyle: {
+          borderColor: p.card, borderWidth: 0.8, areaColor: p.line,
+          shadowBlur: 10, shadowColor: hex2rgba("#1b1a22", .14), shadowOffsetY: 3
+        },
+        emphasis: {
+          label: { show: true, color: p.ink, fontFamily: FONT, fontWeight: 600, fontSize: 11,
+                   formatter: function (o) { return nombre(o.name); } },
+          itemStyle: { areaColor: p.amber, borderColor: p.card, borderWidth: 1.4 }
+        },
+        select: { disabled: true }
       }]
-    }, true);
+    }, anim), true);
 
-    /* instituciones */
+    /* ---- instituciones ---- */
     var inst = D.ayuda.instituciones;
-    mk("chInst").setOption({
-      textStyle: baseText(p),
-      grid: { left: 8, right: 28, top: 8, bottom: 6, containLabel: true },
-      tooltip: { trigger: "axis", valueFormatter: function (v) { return fmt(v) + "%"; } },
-      xAxis: Object.assign({ type: "value", max: 90 }, axisCommon),
-      yAxis: Object.assign({ type: "category", inverse: true, data: inst.map(function (x) { return x.k; }) }, axisCommon),
-      series: [{
-        type: "bar", barWidth: "58%",
-        data: inst.map(function (x) { return x.v; }),
-        itemStyle: { color: p.teal, borderRadius: [0, 6, 6, 0] },
-        label: { show: true, position: "right", color: p.ink, formatter: function (o) { return fmt(o.value) + "%"; } }
-      }]
-    }, true);
+    mk("chInst").setOption(Object.assign({ textStyle: base },
+      hbar(inst.map(function (x) { return x.v; }), p.teal, 92, inst.map(function (x) { return x.k; })),
+      anim), true);
 
-    /* razones */
+    /* ---- razones ---- */
     var raz = D.ayuda.razones_no_ayuda;
-    mk("chRaz").setOption({
-      textStyle: baseText(p),
-      grid: { left: 8, right: 28, top: 8, bottom: 6, containLabel: true },
-      tooltip: { trigger: "axis", valueFormatter: function (v) { return fmt(v) + "%"; } },
-      xAxis: Object.assign({ type: "value", max: 50 }, axisCommon),
-      yAxis: Object.assign({ type: "category", inverse: true, data: raz.map(function (x) { return x.k; }) }, axisCommon),
-      series: [{
-        type: "bar", barWidth: "58%",
-        data: raz.map(function (x) { return x.v; }),
-        itemStyle: { color: p.amber, borderRadius: [0, 6, 6, 0] },
-        label: { show: true, position: "right", color: p.ink, formatter: function (o) { return fmt(o.value) + "%"; } }
-      }]
-    }, true);
+    mk("chRaz").setOption(Object.assign({ textStyle: base },
+      hbar(raz.map(function (x) { return x.v; }), p.amber, 52, raz.map(function (x) { return x.k; })),
+      anim), true);
 
-    /* niñez */
+    /* ---- niñez (barras agrupadas) ---- */
     var nz = D.ninez;
-    mk("chNinez").setOption({
-      textStyle: baseText(p),
-      grid: { left: 8, right: 20, top: 36, bottom: 6, containLabel: true },
-      legend: { top: 0, textStyle: { color: p.ink } },
-      tooltip: { trigger: "axis", valueFormatter: function (v) { return fmt(v) + "%"; } },
-      xAxis: Object.assign({ type: "category", data: nz.labels, axisLabel: { color: p.muted, interval: 0, width: 90, overflow: "break" } }, axisCommon),
-      yAxis: Object.assign({ type: "value", max: 70, axisLabel: { color: p.muted, formatter: "{value}%" } }, axisCommon),
+    function vbar(color) {
+      return function (v) {
+        return { value: v, itemStyle: { borderRadius: [6, 6, 0, 0],
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: color }, { offset: 1, color: hex2rgba(color, .55) }
+          ]) } };
+      };
+    }
+    mk("chNinez").setOption(Object.assign({
+      textStyle: base,
+      grid: { left: 6, right: 16, top: 42, bottom: 6, containLabel: true },
+      legend: { top: 2, icon: "roundRect", itemWidth: 16, itemHeight: 8, textStyle: { color: p.ink, fontFamily: FONT } },
+      tooltip: tooltip({ trigger: "axis", axisPointer: { type: "shadow" } }),
+      xAxis: Object.assign(axX({ type: "category", data: nz.labels }),
+        { axisLabel: { color: p.muted, fontFamily: FONT, interval: 0, width: 92, overflow: "break", lineHeight: 14 },
+          splitLine: { show: false } }),
+      yAxis: axX({ max: 70, axisLabel: { color: p.muted, fontFamily: FONT, formatter: "{value}%" } }),
       series: [
-        { name: "Madre", type: "bar", data: nz.madre, itemStyle: { color: p.rose, borderRadius: [5, 5, 0, 0] } },
-        { name: "Padre", type: "bar", data: nz.padre, itemStyle: { color: p.teal, borderRadius: [5, 5, 0, 0] } }
+        { name: "Madre", type: "bar", data: nz.madre.map(vbar(p.rose)), barGap: "18%", barWidth: "30%" },
+        { name: "Padre", type: "bar", data: nz.padre.map(vbar(p.teal)), barWidth: "30%" }
       ]
-    }, true);
+    }, anim), true);
   }
 
   renderAll();
