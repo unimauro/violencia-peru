@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Quién sufre violencia en el Perú? · Observatorio</title>
+<meta name="description" content="Observatorio de datos sobre violencia en el Perú: cifras oficiales del INEI (ENDES y ENARES) y del MIMP. El foco en mujeres y la brecha con hombres, niñez y otras poblaciones. Sin inventar cifras.">
+<meta property="og:title" content="¿Quién sufre violencia en el Perú?">
+<meta property="og:description" content="Datos oficiales INEI/MIMP. Las mujeres son la mayoría de las víctimas —pero no las únicas. Observatorio con fuentes verificables.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap">
+    <div class="brand"><span class="dot"></span> ¿Quién sufre violencia?</div>
+    <nav>
+      <a href="#respuesta">La respuesta corta</a>
+      <a href="#cifras">Las cifras</a>
+      <a href="#tendencia">Tendencia</a>
+      <a href="#mapa">Mapa</a>
+      <a href="#concepto">Qué es (y qué no)</a>
+      <a href="#ayuda">Buscar ayuda</a>
+      <a href="#fuentes">Fuentes</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" title="Cambiar tema">◐</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Observatorio de datos · Perú</span>
+      <h1>¿Solo las mujeres <em>sufren violencia</em> en el Perú?</h1>
+      <p class="lede">No. La sufren mujeres, hombres, niñez, adolescencia y personas adultas mayores. Pero los datos oficiales muestran una asimetría enorme: <strong>cerca de 8 de cada 10 víctimas atendidas son mujeres</strong>, y la violencia de pareja es abrumadoramente contra ellas.</p>
+      <div class="hero-badges">
+        <span class="badge"><b>53,8%</b> de mujeres, víctimas de su pareja alguna vez</span>
+        <span class="badge"><b>~15%</b> de víctimas atendidas en CEM son hombres</span>
+      </div>
+      <p class="hero-note">Fuentes: INEI — ENDES y ENARES · MIMP — Programa Aurora (CEM). Datos actualizados a <span id="asof"></span>. Ninguna cifra es inventada.</p>
+    </div>
+    <div class="answer">
+      <h3>La brecha en una imagen</h3>
+      <p>Personas atendidas en los Centros Emergencia Mujer (CEM), <span id="cemper"></span>:</p>
+      <div class="gapbar" id="gapbar"></div>
+      <div class="gaplbl"><span id="gaplblm"></span><span id="gaplblh"></span></div>
+      <p style="font-size:12.5px;color:var(--muted);margin-top:14px">Es un <em>registro de atención</em>, no la prevalencia de toda la población. Aun así, marca dónde se concentra el daño medido.</p>
+    </div>
+  </div>
+</div>
+
+<!-- RESPUESTA CORTA -->
+<section id="respuesta">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">La respuesta corta</span>
+      <h2>La publicación del INEI dice “mujeres”. ¿Por qué?</h2>
+      <p>El informe de la imagen —<em>“Violencia psicológica en mujeres de 18 y más años, 2024”</em>— se enfoca en mujeres a propósito: es donde la evidencia es más densa y grave. No es que los demás no existan en los datos; es que ahí está la concentración del problema. Un observatorio honesto muestra <strong>las dos cosas</strong>.</p>
+    </div>
+    <div class="callout">
+      Las mujeres son la <b>mayoría</b> de las víctimas —y la violencia de pareja es abrumadoramente contra ellas— <b>pero no son las únicas</b>. Los hombres, la niñez, la adolescencia y las personas adultas mayores también sufren violencia, y también pueden denunciar. La ley peruana (Ley 30364) protege a <b>las mujeres y a todos los integrantes del grupo familiar</b>.
+    </div>
+    <div class="stats mt">
+      <div class="stat"><div class="n" id="st-muj"></div><div class="l">mujeres atendidas en CEM <span id="st-per"></span></div><div class="s">MIMP · Aurora · Evid. B</div></div>
+      <div class="stat"><div class="n alt" id="st-hom"></div><div class="l">hombres atendidos en CEM en el mismo periodo</div><div class="s">MIMP · Aurora · Evid. B</div></div>
+      <div class="stat"><div class="n" id="st-cai"></div><div class="l">varones atendidos en Centros de Atención Institucional (ene–sep 2024)</div><div class="s">MIMP · Evid. B</div></div>
+      <div class="stat"><div class="n alt">+154 mil</div><div class="l">víctimas atendidas en CEM (ene–nov 2024), todas las poblaciones</div><div class="s">MIMP · Evid. B</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CIFRAS -->
+<section id="cifras">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Las cifras · mujeres 15–49</span>
+      <h2>La violencia de pareja contra la mujer, en números</h2>
+      <p>Encuesta Demográfica y de Salud Familiar (ENDES, INEI): porcentaje de mujeres alguna vez unidas que declararon haber sido víctimas de violencia por su esposo o compañero <strong>alguna vez</strong>.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n" id="c-total"></div><div class="l">víctimas de cualquier violencia de pareja (2023)</div><div class="s">ENDES · Evid. A</div></div>
+      <div class="stat"><div class="n" id="c-psico"></div><div class="l">violencia psicológica y/o verbal</div><div class="s">ENDES 2023 · Evid. A</div></div>
+      <div class="stat"><div class="n" id="c-fisica"></div><div class="l">violencia física</div><div class="s">ENDES 2023 · Evid. A</div></div>
+      <div class="stat"><div class="n" id="c-sexual"></div><div class="l">violencia sexual</div><div class="s">ENDES 2023 · Evid. A</div></div>
+    </div>
+    <div class="two mt">
+      <div class="card">
+        <h3>Tipos de violencia (2023)</h3>
+        <p class="cap">La psicológica es la más extendida. Una mujer puede sufrir más de un tipo a la vez.</p>
+        <div class="chart" id="chTipos"></div>
+      </div>
+      <div class="card">
+        <h3>Dependencia económica</h3>
+        <p class="cap">ENARES 2024 — mujeres de 18 y más años.</p>
+        <div style="display:flex;align-items:center;gap:22px;padding:14px 4px">
+          <div style="font-family:var(--serif);font-size:4rem;font-weight:700;color:var(--rose);line-height:1" id="c-dep"></div>
+          <p style="margin:0;color:var(--ink-2);font-size:14.5px">de las mujeres de 18+ <strong>depende económicamente</strong> de su pareja o expareja para cubrir necesidades básicas (alimentación, vivienda, salud). La dependencia económica hace más difícil salir de una relación violenta.</p>
+        </div>
+        <p class="src-tag">Fuente: INEI — ENARES 2024.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TENDENCIA -->
+<section id="tendencia">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Tendencia 2009–2024</span>
+      <h2>Baja sostenida, pero todavía 1 de cada 2</h2>
+      <p>En 15 años la violencia de pareja declarada cayó de <strong>76,9%</strong> (2009) a cerca de <strong>53%</strong> (2024). Es una caída real —pero significa que aún hoy <strong>una de cada dos</strong> mujeres alguna vez unidas ha vivido violencia de su pareja.</p>
+    </div>
+    <div class="card">
+      <h3>Evolución por tipo de violencia (mujeres 15–49)</h3>
+      <p class="cap">ENDES, INEI. Serie 2009–2020; 2023 y 2024 (I sem.) como anclas recientes de difusión.</p>
+      <div class="chart" id="chTrend" style="height:400px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAPA -->
+<section id="mapa">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Territorio · ENDES 2024</span>
+      <h2>¿Dónde golpea más?</h2>
+      <p>Porcentaje de mujeres alguna vez unidas víctimas de violencia de pareja <strong>alguna vez</strong>, por departamento (ENDES 2024). La sierra sur concentra las cifras más altas: <strong>Apurímac</strong> encabeza con 66,4%.</p>
+    </div>
+    <div class="maprow">
+      <div class="card"><div class="chart" id="chMapa" style="height:460px"></div></div>
+      <div class="card">
+        <h3>Ranking departamental</h3>
+        <p class="cap">% víctimas alguna vez. 4 regiones sin dato: informe en imagen.</p>
+        <div class="rank"><table id="rankTbl"></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPTO -->
+<section id="concepto">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Qué es (y qué no es) violencia</span>
+      <h2>Los tipos de violencia que reconoce la ley</h2>
+      <p>La Ley 30364 define la violencia contra las mujeres y los integrantes del grupo familiar. Cualquier persona —incluido un hombre— puede denunciar estos actos. Humillar a alguien grabándolo y difundiéndolo en redes también es violencia.</p>
+    </div>
+    <div class="tipos" id="tipos"></div>
+
+    <div class="sec-head" style="margin-top:46px;margin-bottom:10px">
+      <h2 style="font-size:1.5rem">“¿Y si mi pareja no me da afecto?” — la distinción que importa</h2>
+      <p>Una duda frecuente: ¿un hombre puede denunciar que su pareja lo humille, o que no quiera tener intimidad con él? Son dos cosas distintas.</p>
+    </div>
+    <div class="sino">
+      <div class="col si">
+        <h4>✓ Esto SÍ es violencia (y es denunciable)</h4>
+        <ul>
+          <li>Que se burlen de ti, te humillen o te denigren.</li>
+          <li>Que te controlen: revisar tu teléfono, prohibirte ver a tu familia o amistades.</li>
+          <li>Insultos, amenazas, gritos, chantaje emocional.</li>
+          <li>Grabarte para humillarte y difundirlo en TikTok, WhatsApp u otras redes.</li>
+          <li>Golpes, empujones o cualquier daño físico.</li>
+          <li>Quitarte tu dinero, impedirte trabajar o destruir tus cosas.</li>
+        </ul>
+      </div>
+      <div class="col no">
+        <h4>✕ Esto NO es violencia (aunque duela)</h4>
+        <ul>
+          <li>Que tu pareja no quiera tener intimidad o relaciones.</li>
+          <li>Que no te dé afecto o no quiera dormir contigo.</li>
+          <li>Que decida separarse o terminar la relación.</li>
+        </ul>
+        <p style="font-size:13px;color:var(--muted);margin-top:14px">El afecto y la intimidad <strong>requieren consentimiento</strong>: nadie está obligado a darlos. El derecho a decir <em>“no”</em> es justamente lo que protege a cualquiera de la violencia sexual. Puede ser motivo de separación o señal de una relación rota —pero no una agresión que se denuncie.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AYUDA -->
+<section id="ayuda">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Buscar ayuda · ENDES</span>
+      <h2>Muchas callan — y hay razones medidas para ello</h2>
+      <p>De las mujeres que vivieron violencia física, solo <strong>26,2%</strong> acudió a una institución y <strong>42,9%</strong> buscó apoyo en personas cercanas. La principal barrera declarada no es el miedo: es creer que “no era necesario”.</p>
+    </div>
+    <div class="two">
+      <div class="card"><h3>¿A qué institución acudieron?</h3><p class="cap">De quienes buscaron ayuda institucional.</p><div class="chart" id="chInst"></div></div>
+      <div class="card"><h3>¿Por qué NO buscaron ayuda?</h3><p class="cap">Razón principal declarada.</p><div class="chart" id="chRaz"></div></div>
+    </div>
+
+    <div class="sec-head" style="margin-top:46px;margin-bottom:16px"><h2 style="font-size:1.5rem">Dónde pedir ayuda</h2>
+    <p>Servicios públicos gratuitos. Atienden a mujeres y a cualquier integrante del grupo familiar.</p></div>
+    <div class="canales" id="canales"></div>
+  </div>
+</section>
+
+<!-- NIÑEZ -->
+<section id="ninez">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">La niñez también</span>
+      <h2>La violencia empieza temprano, en casa</h2>
+      <p>La ENDES también mide cómo se “corrige” a niñas y niños de 1 a 5 años. El castigo físico sigue presente: palmadas y golpes aparecen en uno de cada cuatro hogares, sobre todo por parte de la madre, que es quien más corrige.</p>
+    </div>
+    <div class="card"><h3>Formas de corregir a niñas/os de 1 a 5 años</h3>
+      <p class="cap">ENDES, INEI. % según madre y padre.</p>
+      <div class="chart" id="chNinez" style="height:360px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FUENTES -->
+<section id="fuentes">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Metodología y fuentes</span>
+      <h2>De dónde sale cada número</h2>
+      <p>Regla dura: <strong>no se inventan cifras</strong>. Cada dato se etiqueta según su calidad de evidencia.</p>
+    </div>
+    <div class="ladder">
+      <div class="lv a"><div class="g">A</div><p>Encuesta oficial representativa (ENDES, ENARES).</p></div>
+      <div class="lv b"><div class="g">B</div><p>Registro administrativo (CEM/Aurora, PNP). Mide atención, no prevalencia.</p></div>
+      <div class="lv c"><div class="g">C</div><p>Prensa que cita fuente oficial.</p></div>
+      <div class="lv d"><div class="g">D</div><p>Estimación o referencia conceptual.</p></div>
+    </div>
+    <div class="card">
+      <h3>Fuentes</h3>
+      <ul class="srcs">
+        <li>INEI — <a href="https://www.gob.pe/institucion/inei/informes-publicaciones/8591709-peru-violencia-psicologica-en-mujeres-de-18-y-mas-anos-de-edad-caracteristicas-sociodemograficas-y-dinamica-de-pareja-2024" target="_blank" rel="noopener">Violencia psicológica en mujeres de 18 y más años, 2024</a> (ENARES).</li>
+        <li>INEI — ENDES, informes departamentales 2024 (<a href="https://proyectos.inei.gob.pe/endes/2024/departamentales/" target="_blank" rel="noopener">proyectos.inei.gob.pe/endes/2024</a>).</li>
+        <li>INEI — Nota de prensa N.°078-2024: 53,8% de mujeres víctimas de violencia de pareja.</li>
+        <li>INEI — Capítulo “Violencia contra las mujeres, niñas y niños”, ENDES (serie histórica y búsqueda de ayuda).</li>
+        <li>INEI — ENARES 2024: tolerancia social y dependencia económica (28,6%).</li>
+        <li>MIMP / Programa Aurora — atenciones en Centros Emergencia Mujer (CEM) y CAI, 2024.</li>
+        <li>Ley N.° 30364 — para prevenir, sancionar y erradicar la violencia contra las mujeres y los integrantes del grupo familiar.</li>
+      </ul>
+      <p class="disc">Aclaraciones: (1) Las cifras de ENDES se refieren a mujeres de 15 a 49 años alguna vez unidas; la publicación de la imagen (ENARES) se refiere a mujeres de 18 y más años. No son directamente comparables. (2) Los datos de CEM son <em>registro de atención</em>, no prevalencia poblacional: muchos casos nunca se denuncian. (3) Callao, Tacna, Tumbes y Ucayali no figuran en el mapa porque su informe ENDES 2024 está en imagen escaneada y no se pudo extraer el dato sin riesgo de error.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <div class="brand" style="font-size:16px"><span class="dot"></span> ¿Quién sufre violencia en el Perú?</div>
+        <p>Observatorio de datos abiertos. Hecho para informar con fuentes verificables, sin negar a nadie.</p>
+        <p class="apoyo">¿Te sirve este trabajo? Puedes apoyar: <b>Yape/Plin 940 584 307</b> · paypal.me/unimauro (Carlos Cárdenas).</p>
+      </div>
+      <div class="apoyo">
+        <p><strong>¿Estás en peligro ahora?</strong><br>Llama a la <b>Línea 100</b> (gratuita, 24 h) o a la <b>PNP: 105</b>.</p>
+      </div>
+    </div>
+    <p class="disc">Este sitio no reemplaza atención profesional, legal ni policial. Si tú o alguien corre riesgo inmediato, llama al 105. · Datos: INEI y MIMP.</p>
+  </div>
+</footer>
+
+<button class="chatbtn" id="chatbtn" title="Pregúntale a los datos">💬 Pregúntale a los datos</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.1/echarts.min.js"></script>
+<script src="data/peru-geojson.js"></script>
+<script src="data/data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
