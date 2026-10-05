@@ -188,6 +188,17 @@ section{padding:56px 0;border-top:1px solid var(--line)}
 .callout{background:var(--rose-soft);border-radius:var(--radius);padding:22px 24px;font-size:1.02rem;color:var(--ink)}
 .callout b{color:var(--rose)}
 
+/* apoyo / support */
+.support{display:flex;flex-wrap:wrap;gap:9px}
+.sup{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:999px;
+  font-size:13px;color:#fff;text-decoration:none;border:1px solid transparent;transition:transform .12s,filter .12s}
+.sup b{font-weight:700}
+.sup:hover{transform:translateY(-1px);filter:brightness(1.07)}
+.sup.yape{background:#742384}
+.sup.plin{background:#0ab5c2}
+.sup.paypal{background:#0070ba}
+.sup.coffee{background:#ffdd00;color:#1b1a22}
+
 /* footer */
 footer{border-top:1px solid var(--line);padding:40px 0;background:var(--paper-2)}
 .foot{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:flex-start}
