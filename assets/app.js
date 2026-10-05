@@ -409,8 +409,5 @@
     charts.forEach(function (c) { try { c.resize(); } catch (e) {} });
   });
 
-  /* ---------- chatbot (placeholder — gateway ai.tunky.net, token pendiente) ---------- */
-  document.getElementById("chatbtn").addEventListener("click", function () {
-    alert("El asistente de datos estará disponible pronto.\n\nMientras tanto:\n• ¿Estás en peligro? Línea 100 (gratis, 24h) o PNP 105.\n• Todas las cifras y sus fuentes están en la sección “Fuentes”.");
-  });
+  /* El chatbot vive en assets/chat.js (panel propio + gateway ai.tunky.net). */
 })();

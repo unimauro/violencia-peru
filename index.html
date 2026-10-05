@@ -390,11 +390,30 @@
   </div>
 </footer>
 
-<button class="chatbtn" id="chatbtn" title="Pregúntale a los datos">💬 Pregúntale a los datos</button>
+<button class="chatbtn" id="chatbtn" title="Pregúntale a los datos" aria-label="Abrir asistente">
+  <span class="cb-ic">💬</span><span class="cb-tx">Pregúntale a los datos</span>
+</button>
+
+<div class="chatpanel" id="chatPanel" role="dialog" aria-label="Asistente de datos" aria-hidden="true">
+  <div class="chat-head">
+    <div class="chat-id">
+      <span class="chat-av">◆</span>
+      <div><div class="chat-ti">Asistente de datos</div><div class="chat-st">Violencia en el Perú · INEI + MIMP</div></div>
+    </div>
+    <button class="chat-x" id="chatClose" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="chat-log" id="chatLog"></div>
+  <form class="chat-in" id="chatForm" autocomplete="off">
+    <input id="chatInput" type="text" placeholder="Escribe tu pregunta…" aria-label="Tu pregunta">
+    <button id="chatSend" type="submit" aria-label="Enviar">➤</button>
+  </form>
+  <div class="chat-foot">Orientación con datos oficiales. ¿Emergencia? <b>Línea 100</b> · <b>PNP 105</b>.</div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
 <script src="data/peru-geojson.js"></script>
 <script src="data/data.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/chat.js"></script>
 </body>
 </html>
